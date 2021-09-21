@@ -1,4 +1,4 @@
-# Project Title
+# Delphix Data Control Tower MultiCloud integration with New Relic
 
 One Paragraph of project description goes here
 
@@ -68,7 +68,7 @@ Please read [CONTRIBUTING.md](https://github.com/delphix/.github/blob/master/CON
 
 ## Versioning
 
-We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/your/project/tags). 
+We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/your/project/tags).
 
 ## Authors
 
