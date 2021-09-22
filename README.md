@@ -92,69 +92,21 @@ On execution this script will extract data from all the registered Delphix Engin
 
 This script can be added to cron or any scheduler to run in any time interval. Once the data is available in New Relic, it can be used to be queried or to create dashboards.
 
+## Data and Dashboards
+
 This is how the raw data looks like in the [Query your data](https://docs.newrelic.com/docs/query-your-data/explore-query-data/get-started/introduction-querying-new-relic-data/#browse-data) window for the VDB metric:
 
 ![Screenshot](images/image1.png)
 
+With this data we can create graphs and dashboards like this:
 
+![Screenshot](images/image3.png)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+And this is the query we used to create this graph:
 
 ```
-until finished
+SELECT MAX(data_storage_capacity)-MIN(data_storage_used) FROM `Delphix engines` SINCE 7 DAYS AGO TIMESERIES facet name
 ```
-
-End with an example of getting some data out of the system or using it for a little demo
-
-## Running the tests
-
-Explain how to run the automated tests for this system
-
-### Break down into end to end tests
-
-Explain what these tests test and why
-
-```
-Give an example
-```
-
-### And coding style tests
-
-Explain what these tests test and why
-
-```
-Give an example
-```
-
-## Deployment
-
-Add additional notes about how to deploy this on a live system
-
-## Built With
-
-* [Dropwizard](http://www.dropwizard.io/1.0.2/docs/) - The web framework used
-* [Maven](https://maven.apache.org/) - Dependency Management
-* [ROME](https://rometools.github.io/rome/) - Used to generate RSS Feeds
 
 ## Contributing
 
@@ -164,18 +116,26 @@ Please read [CONTRIBUTING.md](https://github.com/delphix/.github/blob/master/CON
 
 We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/your/project/tags).
 
-## Authors
+## Reporting Issues
 
-* **Joe Smith** - *Initial work* - [Company](https://github.com/Company)
+Issues should be reported in the GitHub repo's issue tab. Include a link to it.
 
-See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
+## Statement of Support
 
-## License
+This software is provided as-is, without warranty of any kind or commercial support through Delphix. See the associated license for additional details. Questions, issues, feature requests, and contributions should be directed to the community as outlined in the Delphix Community Guidelines.
 
-This project is licensed under the XX License - see the [LICENSE.md](LICENSE.md) file for details
+License
+```
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
 
-## Acknowledgments
+     http://www.apache.org/licenses/LICENSE-2.0
 
-* Hat tip to anyone whose code was used
-* Inspiration
-* etc
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+ ```
+Copyright (c) 2014, 2016 by Delphix. All rights reserved.
