@@ -8,25 +8,86 @@ These instructions will provide the code you need to extract data from DCT Multi
 
 ### Prerequisites
 
-It's assumed that you have a New Relic valid account and one or many Delphix Engines registered in DCT Multicloud.
+It's assumed that you have a New Relic valid account and one or many [Delphix Engines registered in DCT Multicloud](https://docs.delphix.com/dctmc/connecting-a-delphix-engine).
 DCT Multicloud will extract data from the Delphix Engines and we will use [New Relic Telemetry SDK](https://docs.newrelic.com/docs/telemetry-data-platform/ingest-apis/telemetry-sdks-report-custom-telemetry-data/) to send that data to New Relic.
 For this project, we will use the [Python SDK](https://github.com/newrelic/newrelic-telemetry-sdk-python), however you can use any of the available SDKs in different languages, because you will be using DCT Multicloud Restful API.
 
-```
-Give examples
-```
+
 
 ### Installing
 
-A step by step series of examples that tell you how to get a development env running
+To push the data from Delphix DCT Multicloud to New Relic, we use the script dlpx_dct_to_nr.py.
+To use this script we have to do some steps first:
 
-Say what the step will be
+* Generate the [keys to connect to DCT Multicloud](https://docs.delphix.com/dctmc/authentication)
+* Generate the [New Relic access key](https://docs.newrelic.com/docs/apis/intro-apis/new-relic-api-keys/#ingest-license-key)
+
+Once we have these keys we need to replace them in the script:
+
+* In req_headers we replace the DCT Multicloud key
+* In NEW_RELIC_INSERT_KEY we replace the New Relic access key
 
 ```
-Give the example
+import os
+import requests
+import json
+import sys
+import time
+from newrelic_telemetry_sdk import Event, EventClient
+from requests.packages.urllib3.exceptions import InsecureRequestWarning
+
+requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
+
+DLPX_TYPES= ["engines","sources","dsources","vdbs","environments"]
+#
+# Request Headers ...
+#
+req_headers = {
+	'Authorization': 'apk 2.bnQDDx46Z4CDlIShLw2ZHElWLyKtsmZaBjbQPjui8LcQ3nELbkdEbQJSki6vmwLf'
+}
+
+#
+# Python session, also handles the cookies ...
+#
+session = requests.session()
+
+#
+# Login ...
+#
+os.environ['NEW_RELIC_INSERT_KEY'] = "87a453b2efe4nd4df78b167e7ac457e076c7NRAL"
+print ('')
+for i in DLPX_TYPES:
+
+	response = requests.get('https://localhost:443/v1/'+i, headers=req_headers, verify=False)
+	responsej = json.loads(response.text)
+	print("")
+	print("")
+	print("**********************************************************************************************************************************")
+	event_client = EventClient(os.environ["NEW_RELIC_INSERT_KEY"])
+	NEWRELIC_TYPE="Delphix " + str(i)
+	print (NEWRELIC_TYPE)
+	for line in responsej['items']:
+		event = Event(
+			NEWRELIC_TYPE, line
+		)
+		print (event)
+		response = event_client.send(event)
+		response.raise_for_status()
+		print("Event sent successfully!")
+		print("")
+
+print ('')
+sys.exit(0)
 ```
 
-And repeat
+On execution this script will extract data from all the registered Delphix Engines for the following metrics:
+
+* Engines - Data extraction date, CPU Count, Storage, Memory, Engine Type, Version, etc.
+* Environments - Data extraction date, Status, Engine ID, Name, etc.
+* Sources - Data extraction date, Database Type, Database Version, Environment ID, JDBC Connection String, Database Name and Size, etc
+* dSources - Data extraction date, dSource Creation Date, dSource Type, Version, Name, Status, Size, etc.
+* VDBs - Data extraction date, Database Type and Version, Creation Date, Group Name, Name, Parent ID, Size, Status, etc.
+
 
 ```
 until finished
