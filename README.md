@@ -1,6 +1,6 @@
 # Delphix Data Control Tower MultiCloud integration with New Relic
 
-One Paragraph of project description goes here
+This project will allow you to send data from [Delphix Data Control Tower Multicloud](https://docs.delphix.com/dctmc) to [New Relic] (https://newrelic.com/). DCT Multicloud is a tool that will allow you to connect to all your Delphix engines on premises or in the cloud (AWS, Azure, Google Cloud, OCI and IBM)
 
 ## Getting Started
 
