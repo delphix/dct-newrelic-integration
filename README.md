@@ -88,6 +88,35 @@ On execution this script will extract data from all the registered Delphix Engin
 * dSources - Data extraction date, dSource Creation Date, dSource Type, Version, Name, Status, Size, etc.
 * VDBs - Data extraction date, Database Type and Version, Creation Date, Group Name, Name, Parent ID, Size, Status, etc.
 
+This script can be added to cron or any scheduler to run in any time interval. Once the data is available in New Relic, it can be used to be queried or to create dashboards.
+
+This is how the raw data looks like in the [Query your data](https://docs.newrelic.com/docs/query-your-data/explore-query-data/get-started/introduction-querying-new-relic-data/#browse-data) window for the VDB metric:
+
+![Screenshot](images/image1.png)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 ```
 until finished
