@@ -4,9 +4,11 @@ This project will allow you to send data from [Delphix Data Control Tower Multic
 
 ![Screenshot](images/image2.png)
 
+
 ## Getting Started
 
 These instructions will provide the code you need to extract data from DCT Multicloud and send it to New Relic.
+
 
 ### Prerequisites
 
@@ -27,6 +29,8 @@ Once we have these keys we need to replace them in the script:
 
 * In req_headers we replace the DCT Multicloud key
 * In NEW_RELIC_INSERT_KEY we replace the New Relic access key
+
+This is the script:
 
 ```
 import os
@@ -81,7 +85,7 @@ print ('')
 sys.exit(0)
 ```
 
-On execution this script will extract data from all the registered Delphix Engines for the following metrics:
+On execution, this script will extract data from all the registered Delphix Engines for the following metrics:
 
 * Engines - Data extraction date, CPU Count, Storage, Memory, Engine Type, Version, etc.
 * Environments - Data extraction date, Status, Engine ID, Name, etc.
@@ -90,6 +94,7 @@ On execution this script will extract data from all the registered Delphix Engin
 * VDBs - Data extraction date, Database Type and Version, Creation Date, Group Name, Name, Parent ID, Size, Status, etc.
 
 This script can be added to cron or any scheduler to run in any time interval. Once the data is available in New Relic, it can be used to be queried or to create dashboards.
+
 
 ## Data and Dashboards
 
@@ -107,17 +112,21 @@ And this is the query we used to create this graph:
 SELECT MAX(data_storage_capacity)-MIN(data_storage_used) FROM `Delphix engines` SINCE 7 DAYS AGO TIMESERIES facet name
 ```
 
+
 ## Contributing
 
 Please read [CONTRIBUTING.md](https://github.com/delphix/.github/blob/master/CONTRIBUTING.md) for details on our code of conduct, and the process for submitting pull requests to us.
+
 
 ## Versioning
 
 We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/your/project/tags).
 
+
 ## Reporting Issues
 
 Issues should be reported in the GitHub repo's issue tab. Include a link to it.
+
 
 ## Statement of Support
 
