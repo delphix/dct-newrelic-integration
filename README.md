@@ -4,11 +4,13 @@ This project will allow you to send data from [Delphix Data Control Tower Multic
 
 ## Getting Started
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
+These instructions will provide the code you need to extract data from DCT Multicloud and send it to New Relic.
 
 ### Prerequisites
 
-What things you need to install the software and how to install them
+It's assumed that you have a New Relic valid account and one or many Delphix Engines registered in DCT Multicloud.
+DCT Multicloud will extract data from the Delphix Engines and we will use [New Relic Telemetry SDK](https://docs.newrelic.com/docs/telemetry-data-platform/ingest-apis/telemetry-sdks-report-custom-telemetry-data/) to send that data to New Relic.
+For this project, we will use the [Python SDK](https://github.com/newrelic/newrelic-telemetry-sdk-python), however you can use any of the available SDKs in different languages, because you will be using DCT Multicloud Restful API.
 
 ```
 Give examples
