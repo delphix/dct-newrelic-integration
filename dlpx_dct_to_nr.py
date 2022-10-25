@@ -9,12 +9,17 @@ from requests.packages.urllib3.exceptions import InsecureRequestWarning
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
 DLPX_TYPES= ["engines","sources","dsources","vdbs","environments"]
+
 #
-# Request Headers ...
+# Required Input Parameters
 #
-req_headers = {
-	'Authorization': 'apk 2.bnQDDx46Z4CDlIShLw2ZHElWLyKtsmZaBjbQPjui8LcQ3TELbkdEbQJSki6vmwLf'
-}
+try:
+	DCT_URL = os.environ["DCT_URL"] # Example: https://localhost:443
+	DCT_KEY = os.environ['DCT_KEY'] # Example: 'apk 2.bnQDDx46Z4CDlIShLw2ZHElWLyKtsmZaBjbQPjui8LcQ3TELbkdEbQJSki6vmwLf'
+	NEW_RELIC_USER_KEY = os.environ['NEW_RELIC_USER_KEY'] # Generated User Key from https://one.newrelic.com/admin-portal/api-keys/home
+except:
+	print ("[Error] One or more of the DCT_URL, DCT_KEY, OR NEW_RELIC_USER_KEY environment variables are empty. Ensure all values are specified.")
+	exit()
 
 #
 # Python session, also handles the cookies ...
@@ -22,18 +27,19 @@ req_headers = {
 session = requests.session()
 
 #
-# Login ...
+# Request Headers ...
 #
-os.environ['NEW_RELIC_INSERT_KEY'] = "87a453b2efe4bd4df78b167e7ac457e076c7NRAL"
-print ('')
-for i in DLPX_TYPES:
+req_headers = {
+	'Authorization': DCT_KEY
+}
 
-	response = requests.get('https://localhost:443/v1/'+i, headers=req_headers, verify=False)
+for i in DLPX_TYPES:
+	response = requests.get(DCT_URL + '/v1/' + i, headers=req_headers, verify=False)
 	responsej = json.loads(response.text)
 	print("")
 	print("")
 	print("**********************************************************************************************************************************")
-	event_client = EventClient(os.environ["NEW_RELIC_INSERT_KEY"])
+	event_client = EventClient(NEW_RELIC_USER_KEY)
 	NEWRELIC_TYPE="Delphix " + str(i)
 	print (NEWRELIC_TYPE)
 	for line in responsej['items']:

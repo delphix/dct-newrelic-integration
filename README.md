@@ -1,91 +1,50 @@
-# Delphix Data Control Tower MultiCloud integration with New Relic
+# Delphix Data Control Tower's Data Source with New Relic
 
-This project will allow you to send data from [Delphix Data Control Tower Multicloud](https://docs.delphix.com/dctmc) to [New Relic](https://newrelic.com/) as events. DCT Multicloud is a tool that will allow you to connect to all your Delphix engines on premises or in the cloud (AWS, Azure, Google Cloud, OCI and IBM)
+This project will allow you to send data from [Delphix Data Control Tower (DCT)](https://delphix.document360.io/dct/docs) to [New Relic](https://newrelic.com/) through the Events API. This repository is one component of the Delphix Quickstart. More can be learned about the [soultion on the New Relic website](https://newrelic.com/instant-observability/delphix).
 
 ![Screenshot](images/image2.png)
 
 
 ## Getting Started
 
-These instructions will provide the code you need to extract data from DCT Multicloud and send it to New Relic.
+These instructions will provide the information you need to extract data from DCT and send it to New Relic. 
 
 
 ### Prerequisites
 
-It's assumed that you have a New Relic valid account and one or many [Delphix Engines registered in DCT Multicloud](https://docs.delphix.com/dctmc/connecting-a-delphix-engine).
-DCT Multicloud will extract data from the Delphix Engines and we will use [New Relic Telemetry SDK](https://docs.newrelic.com/docs/telemetry-data-platform/ingest-apis/telemetry-sdks-report-custom-telemetry-data/) to send that data to New Relic.
-For this project, we will use the [Python SDK](https://github.com/newrelic/newrelic-telemetry-sdk-python), however you can use any of the available SDKs in different languages.
+* New Relic Account: [Sign Up](https://newrelic.com/signup)
+* Delphix Data Control Tower (DCT) with one or more engines: [Data Control Tower Docs](https://delphix.document360.io/dct/docs)
+* Python 3.10: [Python Install](https://www.python.org/downloads)
+* New Relic Python SDK: [Installation Directions](https://github.com/newrelic/newrelic-telemetry-sdk-python)
+* This [GitHub repository](https://github.com/delphix/dct-newrelic-integration)
 
 
-### Installing
+### Configuration
 
-To push the data from Delphix DCT Multicloud to New Relic, we use the script ```dlpx_dct_to_nr.py```.
-To use this script we have to do some steps first:
+The ```dlpx_dct_to_nr.py``` script contains the logic to perform the data upload. However, you must do some configuration first. 
 
-* Generate the [keys to connect to DCT Multicloud](https://docs.delphix.com/dctmc/authentication)
-* Generate the [New Relic access key](https://docs.newrelic.com/docs/apis/intro-apis/new-relic-api-keys/#ingest-license-key)
+Retrieve the following:
+* Record the DCT URL.
+* Generate a [DCT APK](https://delphix.document360.io/docs).
+* Generate a [New Relic User Key](https://docs.newrelic.com/docs/apis/intro-apis/new-relic-api-keys/#ingest-license-key).
 
-Once we have these keys we need to replace them in the script:
+Once we have these values, specify the following environment variables:
+* DCT_URL
+* DCT_KEY
+* NEW_RELIC_USER_KEY
 
-* In req_headers we replace the DCT Multicloud key
-* In NEW_RELIC_INSERT_KEY we replace the New Relic access key
+Note: You may modify the Python script directly, but it is best practice to specify sensitive data through environment variables.
 
-This is the script:
 
-```
-import os
-import requests
-import json
-import sys
-import time
-from newrelic_telemetry_sdk import Event, EventClient
-from requests.packages.urllib3.exceptions import InsecureRequestWarning
+### Execution
 
-requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
+You may test the script by running the following command:
+```python dlpx_dct_to_nr.py```
 
-DLPX_TYPES= ["engines","sources","dsources","vdbs","environments"]
-#
-# Request Headers ...
-#
-req_headers = {
-	'Authorization': 'apk 2.bnQDDx46Z4CDlIShLw2ZHElWLyKtsmZaBjbQPjui8LcQ3nELbkdEbQJSki6vmwLf'
-}
+In production, it is common to use a scheduler, such as a cron, to repeat the call on a recurring basis. For example, the following command will run the script every 5 minutes:
+```*/5 * * * * python dlpx_dct_to_nr.py```
 
-#
-# Python session, also handles the cookies ...
-#
-session = requests.session()
-
-#
-# Login ...
-#
-os.environ['NEW_RELIC_INSERT_KEY'] = "87a453b2efe4nd4df78b167e7ac457e076c7NRAL"
-print ('')
-for i in DLPX_TYPES:
-
-	response = requests.get('https://localhost:443/v1/'+i, headers=req_headers, verify=False)
-	responsej = json.loads(response.text)
-	print("")
-	print("")
-	print("**********************************************************************************************************************************")
-	event_client = EventClient(os.environ["NEW_RELIC_INSERT_KEY"])
-	NEWRELIC_TYPE="Delphix " + str(i)
-	print (NEWRELIC_TYPE)
-	for line in responsej['items']:
-		event = Event(
-			NEWRELIC_TYPE, line
-		)
-		print (event)
-		response = event_client.send(event)
-		response.raise_for_status()
-		print("Event sent successfully!")
-		print("")
-
-print ('')
-sys.exit(0)
-```
-
-On execution, this script will extract data from all the registered Delphix Engines for the following metrics:
+On each execution, this script will extract the following metrics from all registered Delphix engines:
 
 * Engines - Data extraction date, CPU Count, Storage, Memory, Engine Type, Version, etc.
 * Environments - Data extraction date, Status, Engine ID, Name, etc.
@@ -93,12 +52,12 @@ On execution, this script will extract data from all the registered Delphix Engi
 * dSources - Data extraction date, dSource Creation Date, dSource Type, Version, Name, Status, Size, etc.
 * VDBs - Data extraction date, Database Type and Version, Creation Date, Group Name, Name, Parent ID, Size, Status, etc.
 
-This script can be added to cron or any scheduler to run in any time interval. Once the data is available in New Relic, it can be used to be queried or to create dashboards.
 
+## Data, Dashboards, and Alerts
 
-## Data and Dashboards
+Once the data is available within New Relic, you are free to leverage it as you wish through customized Dashboards and Alerts. Samples can be found as a part of the [Delphix Quickstart](https://newrelic.com/instant-observability/delphix). 
 
-This is how the raw data looks like in the [Query your data](https://docs.newrelic.com/docs/query-your-data/explore-query-data/get-started/introduction-querying-new-relic-data/#browse-data) window for the VDB metric:
+As an example, this is how the raw data looks like in the [Query your data](https://docs.newrelic.com/docs/query-your-data/explore-query-data/get-started/introduction-querying-new-relic-data/#browse-data) window for the VDB metric:
 
 ![Screenshot](images/image1.png)
 
@@ -146,4 +105,4 @@ License
  See the License for the specific language governing permissions and
  limitations under the License.
  ```
-Copyright (c) 2014, 2016 by Delphix. All rights reserved.
+Copyright (c) 2021, 2022 by Delphix. All rights reserved.
