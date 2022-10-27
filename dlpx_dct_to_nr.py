@@ -8,7 +8,7 @@ from requests.packages.urllib3.exceptions import InsecureRequestWarning
 
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
-DLPX_TYPES= ["engines","sources","dsources","vdbs","environments"]
+DLPX_TYPES= ["management/engines","sources","dsources","vdbs","environments"]
 
 #
 # Required Input Parameters
@@ -34,7 +34,7 @@ req_headers = {
 }
 
 for i in DLPX_TYPES:
-	response = requests.get(DCT_URL + '/v1/' + i, headers=req_headers, verify=False)
+	response = requests.get(DCT_URL + '/v2/' + i, headers=req_headers, verify=False)
 	responsej = json.loads(response.text)
 	print("")
 	print("")
