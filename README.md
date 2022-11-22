@@ -1,37 +1,43 @@
 # Delphix Data Control Tower's Data Source with New Relic
 
-This project will allow you to send data from [Delphix Data Control Tower (DCT)](https://delphix.document360.io/dct/docs) to [New Relic](https://newrelic.com/) through the Events API. This repository is one component of the Delphix Quickstart. More can be learned about the [soultion on the New Relic website](https://newrelic.com/instant-observability/delphix).
+This project will allow you to send data from [Delphix Data Control Tower (DCT)](https://delphix.document360.io/dct/docs) to [New Relic](https://newrelic.com/) through the Events API. This repository is one component of the Delphix Quickstart. You can learn more on the [Delphix Instant Observability page](https://newrelic.com/instant-observability/delphix).
 
 ![Screenshot](images/image2.png)
 
 
 ## Getting Started
 
-These instructions will provide the information you need to extract data from DCT and send it to New Relic. 
+These instructions will provide the information you need to extract data from DCT and send it to New Relic. The Python script can run from any location with access to both DCT and New Relic.
 
 
 ### Prerequisites
 
 * New Relic Account: [Sign Up](https://newrelic.com/signup)
 * Delphix Data Control Tower (DCT) with one or more engines: [Data Control Tower Docs](https://delphix.document360.io/dct/docs)
-* Python 3.10: [Python Install](https://www.python.org/downloads)
-* New Relic Python SDK: [Installation Directions](https://github.com/newrelic/newrelic-telemetry-sdk-python)
+* Python 3.11+: [Python Install](https://www.python.org/downloads)
 * This [GitHub repository](https://github.com/delphix/dct-newrelic-integration)
 
+Note: If you are using Windows, `py` may be specified instead of `python`.
 
-### Configuration
 
+### Setup
 The ```dlpx_dct_to_nr.py``` script contains the logic to perform the data upload. However, you must do some configuration first. 
 
+#### Package Installation
+Run the following 2 pip installation commands to install the required Python packages:
+```python -m pip install requests```
+```python -m pip install newrelic_telemetry_sdk```
+
+#### Environment Variable Configuration
 Retrieve the following:
 * Record the DCT URL.
-* Generate a [DCT APK](https://delphix.document360.io/docs).
-* Generate a [New Relic User Key](https://docs.newrelic.com/docs/apis/intro-apis/new-relic-api-keys/#ingest-license-key).
+* Generate a [DCT API Key](https://delphix.document360.io/docs/authentication
+* Generate a [New Relic INGEST - LICENSE Key](https://docs.newrelic.com/docs/apis/intro-apis/new-relic-api-keys/#ingest-license-key).
 
 Once we have these values, specify the following environment variables:
 * DCT_URL
 * DCT_KEY
-* NEW_RELIC_USER_KEY
+* NEW_RELIC_KEY
 
 Note: You may modify the Python script directly, but it is best practice to specify sensitive data through environment variables.
 
@@ -41,7 +47,7 @@ Note: You may modify the Python script directly, but it is best practice to spec
 You may test the script by running the following command:
 ```python dlpx_dct_to_nr.py```
 
-In production, it is common to use a scheduler, such as a cron, to repeat the call on a recurring basis. For example, the following command will run the script every 5 minutes:
+In production, it is common to use a scheduler, such as a cron on Unix or SCHTASKS on Windows, to repeat the call on a recurring basis. For example, the following cron command will run the script every 5 minutes:
 ```*/5 * * * * python dlpx_dct_to_nr.py```
 
 On each execution, this script will extract the following metrics from all registered Delphix engines:
