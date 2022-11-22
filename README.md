@@ -1,4 +1,4 @@
-# Delphix Data Control Tower's Data Source with New Relic
+# Delphix Data Control Tower's Integration with New Relic
 
 This project will allow you to send data from [Delphix Data Control Tower (DCT)](https://delphix.document360.io/dct/docs) to [New Relic](https://newrelic.com/) through the Events API. This repository is one component of the Delphix Quickstart. You can learn more on the [Delphix Instant Observability page](https://newrelic.com/instant-observability/delphix).
 
