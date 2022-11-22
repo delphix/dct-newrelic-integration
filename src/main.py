@@ -70,11 +70,11 @@ session = requests.session()
     before_sleep=tenacity.before_sleep_log(logging, logging.INFO),
 )
 def send_event(event):
-    logging.info(event)
+    logging.debug(event)
     event_client = EventClient(keys['NEW_RELIC_INSERT_KEY'])
     response = event_client.send(event)
     response.raise_for_status()
-    logging.info("Event sent successfully!\n")
+    logging.debug("Event sent successfully!\n")
 
 
 @tenacity.retry(
