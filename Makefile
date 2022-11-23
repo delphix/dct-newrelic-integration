@@ -76,7 +76,7 @@ clean: clean_build
 
 build: --check_env_exists clean_build
 	@# Help: Makes the delphix-nr build
-	$(VENV)/bin/pyinstaller --onefile setup.py -n delphix-nr
+	$(VENV)/bin/pyinstaller --onefile src/main.py -n delphix-nr
 	-@echo 'Build is present at $(ROOT_DIR)/dist/delphix-nr'
 	$(call show_version)
 

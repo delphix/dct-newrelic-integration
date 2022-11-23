@@ -29,7 +29,7 @@ setup(
     # Format is mypkg.mymodule:the_function'
     entry_points="""
         [console_scripts]
-        nr=src.main
+        nr=src.main:run
     """,
     author="Delphix Engineering",
     keywords="new-relic, delphix, dct",  # noqa
