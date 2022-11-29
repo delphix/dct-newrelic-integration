@@ -4,25 +4,17 @@ import json
 import sys
 import time
 from newrelic_telemetry_sdk import Event, EventClient
+from requests.packages.urllib3.exceptions import InsecureRequestWarning
 
-##
-# Uncomment the following lines to ignore SSL Warnings
-##
-# from requests.packages.urllib3.exceptions import InsecureRequestWarning
-# requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
+requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
-DLPX_TYPES= ["management/engines","sources","dsources","vdbs","environments"]
-
+DLPX_TYPES= ["engines","sources","dsources","vdbs","environments"]
 #
-# Required Input Parameters
+# Request Headers ...
 #
-try:
-	DCT_URL = os.environ["DCT_URL"] # Example: https://localhost:443
-	DCT_KEY = os.environ['DCT_KEY'] # Example: 'apk 2.bnQDDx46Z4CDlIShLw2ZHElWLyKtsmZaBjbQPjui8LcQ3TELbkdEbQJSki6vmwLf'
-	NEW_RELIC_KEY = os.environ['NEW_RELIC_KEY'] # Generated "INGEST - LICENSE" Key from https://one.newrelic.com/admin-portal/api-keys/home
-except:
-	print ("[Error] One or more of the DCT_URL, DCT_KEY, OR NEW_RELIC_KEY environment variables are empty. Ensure all values are specified.")
-	exit()
+req_headers = {
+	'Authorization': 'apk 2.bnQDDx46Z4CDlIShLw2ZHElWLyKtsmZaBjbQPjui8LcQ3TELbkdEbQJSki6vmwLf'
+}
 
 #
 # Python session, also handles the cookies ...
@@ -30,29 +22,29 @@ except:
 session = requests.session()
 
 #
-# Request Headers ...
+# Login ...
 #
-req_headers = {
-	'Authorization': DCT_KEY
-}
-
+os.environ['NEW_RELIC_INSERT_KEY'] = "87a453b2efe4bd4df78b167e7ac457e076c7NRAL"
+print ('')
 for i in DLPX_TYPES:
-	NEWRELIC_TYPE = "Delphix " + str(i)	
-	print ("Uploading events: " + NEWRELIC_TYPE)
-	response = requests.get(DCT_URL + '/v2/' + i, headers=req_headers, verify=False)
+
+	response = requests.get('https://localhost:443/v1/'+i, headers=req_headers, verify=False)
 	responsej = json.loads(response.text)
-	# print("")
-	# print("")
-	# print("**********************************************************************************************************************************")
-	event_client = EventClient(NEW_RELIC_KEY)
+	print("")
+	print("")
+	print("**********************************************************************************************************************************")
+	event_client = EventClient(os.environ["NEW_RELIC_INSERT_KEY"])
+	NEWRELIC_TYPE="Delphix " + str(i)
+	print (NEWRELIC_TYPE)
 	for line in responsej['items']:
 		event = Event(
 			NEWRELIC_TYPE, line
 		)
-		# print (event)
+		print (event)
 		response = event_client.send(event)
 		response.raise_for_status()
-	print ("Upload successful: " + NEWRELIC_TYPE)
+		print("Event sent successfully!")
+		print("")
 
+print ('')
 sys.exit(0)
-
