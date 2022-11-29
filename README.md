@@ -14,21 +14,21 @@ These instructions will provide the information you need to extract data from DC
 
 * New Relic Account: [Sign Up](https://newrelic.com/signup)
 * Delphix Data Control Tower (DCT) with one or more engines: [Data Control Tower Docs](https://delphix.document360.io/dct/docs)
-* Python 3.11+: [Python Install](https://www.python.org/downloads)
+* Python 3.8+: [Python Install](https://www.python.org/downloads)
 * This [GitHub repository](https://github.com/delphix/dct-newrelic-integration)
 
 Note: If you are using Windows, `py` may be specified instead of `python`.
 
 
 ### Setup
-The ```dlpx_dct_to_nr.py``` script contains the logic to perform the data upload. However, you must do some configuration first. 
+The ```src/main.py``` script contains the logic to perform the data upload. However, you must do some configuration first. 
 
 #### Package Installation
 Run the following 2 pip installation commands to install the required Python packages:
 ```python -m pip install requests```
 ```python -m pip install newrelic_telemetry_sdk```
 
-#### Environment Variable Configuration
+#### Required Variable Configuration
 Retrieve the following:
 * Record the DCT URL.
 * Generate a [DCT API Key](https://delphix.document360.io/docs/authentication
@@ -41,14 +41,16 @@ Once we have these values, specify the following environment variables:
 
 Note: You may modify the Python script directly, but it is best practice to specify sensitive data through environment variables.
 
+#### Optional Variable Configuration
+Some variables, such as Components, Interval, and Logging variables, are set by default in the `dct_nr_config.ini` file. These can be  updated to modify which APIs to call, how long to wait between syncs, or logging level.
 
 ### Execution
 
 You may test the script by running the following command:
-```python dlpx_dct_to_nr.py```
+```python src/main.py```
 
-In production, it is common to use a scheduler, such as a cron on Unix or SCHTASKS on Windows, to repeat the call on a recurring basis. For example, the following cron command will run the script every 5 minutes:
-```*/5 * * * * python dlpx_dct_to_nr.py```
+In production, it is common to use a scheduler, such as a systemd, nohup, or wininit.exe, to ensure the script continually runs. For example, the following nohup command will run the script every N seconds based on the Interval provided in the `dct_nr_config.ini` file:
+```nohup python src/main.py &```
 
 On each execution, this script will extract the following metrics from all registered Delphix engines:
 
@@ -88,9 +90,9 @@ Please read [CONTRIBUTING.md](https://github.com/delphix/.github/blob/master/CON
 We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/your/project/tags).
 
 
-## Reporting Issues
+## Reporting Issues and Questions
 
-Issues should be reported in the GitHub repo's issue tab. Include a link to it.
+Please report all issues and questions in the [GitHub issue tab](https://github.com/delphix/dct-newrelic-integration/issues) or [Delphix Community page](https://community.delphix.com/home). Please include a complete problem description, error logs if appropriate, and directions on how to reproduce.
 
 
 ## Statement of Support
