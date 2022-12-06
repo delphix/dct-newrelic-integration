@@ -33,8 +33,6 @@ if not os.path.exists(config_file):
                     "Please add dct_nr_config.ini in the current directory")
 
 config.read_file(open("dct_nr_config.ini"))
-keys = config['API_KEYS']
-dct = config['DCT']
 config_log_level = config['LOGGING']['LEVEL']
 INTERVAL = int(config['INTERVAL']['seconds'])
 
@@ -48,13 +46,22 @@ logging_levels = {
 logging.basicConfig(level=logging_levels[config_log_level], format=formatter)
 
 
-DCT_URL = dct['DCT_HOST_URL']
-DCT_API_URL = f'https://{DCT_URL}/v2/'
+DCT_HOST_URL = os.environ.get('DCT_HOST_URL')
+DCT_API_KEY = os.environ.get('DCT_API_KEY')
+NEW_RELIC_INSERT_KEY = os.environ.get('NEW_RELIC_INSERT_KEY')
+
+if (DCT_HOST_URL and DCT_API_KEY and NEW_RELIC_INSERT_KEY) is None:
+    raise Exception("Please add the below keys as environment variables: "
+                    "\n1. DCT_HOST_URL"
+                    "\n2. DCT_API_KEY"
+                    "\n3. NEW_RELIC_INSERT_KEY")
+
+DCT_API_URL = f'https://{DCT_HOST_URL}/v2/'
 DLPX_TYPES = [i.strip() for i in config['COMPONENTS']['monitor'].split(',')]
 
 # Request Headers ...
 req_headers = {
-    'Authorization': keys['DCT_API_KEY']  # noqa
+    'Authorization': DCT_API_KEY  # noqa
 }
 
 # Python session, also handles the cookies ...
@@ -71,7 +78,7 @@ session = requests.session()
 )
 def send_event(event):
     logging.debug(event)
-    event_client = EventClient(keys['NEW_RELIC_INSERT_KEY'])
+    event_client = EventClient(NEW_RELIC_INSERT_KEY)
     response = event_client.send(event)
     response.raise_for_status()
     logging.debug("Event sent successfully!\n")
@@ -102,11 +109,11 @@ def push_data():
         for i in DLPX_TYPES:
             response_json = get_data_from_dct(i)
 
-            NEWRELIC_TYPE = "Delphix " + str(i).split('/')[-1]
-            logging.info("Sending Data for %s \n", NEWRELIC_TYPE)
+            new_relic_type = "Delphix " + str(i).split('/')[-1]
+            logging.info("Sending Data for %s \n", new_relic_type)
             for line in response_json['items']:
                 event = Event(
-                    NEWRELIC_TYPE, line
+                    new_relic_type, line
                 )
                 send_event(event)
 
@@ -123,10 +130,10 @@ def run():
         logging.info('#' * 70)
         logging.info("Staring to Push Data to New Relic")
         logging.info('#' * 70)
-        logging.debug(f"{DCT_URL=}")
+        logging.debug(f"{DCT_HOST_URL=}")
         logging.debug(f"{DLPX_TYPES=}")
         logging.debug(f"{req_headers=}")
-        logging.debug(f"NEW_RELIC_INSERT_KEY = {keys['NEW_RELIC_INSERT_KEY']}")
+        logging.debug(f"NEW_RELIC_INSERT_KEY = {NEW_RELIC_INSERT_KEY}")
         push_data()
 
 
