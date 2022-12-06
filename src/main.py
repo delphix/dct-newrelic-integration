@@ -57,6 +57,7 @@ if (DCT_HOST_URL and DCT_API_KEY and NEW_RELIC_INSERT_KEY) is None:
                     "\n3. NEW_RELIC_INSERT_KEY")
 
 DCT_API_URL = f'https://{DCT_HOST_URL}/v2/'
+QUERY = '?limit=1000'
 DLPX_TYPES = [i.strip() for i in config['COMPONENTS']['monitor'].split(',')]
 
 # Request Headers ...
@@ -92,11 +93,23 @@ def send_event(event):
     wait=tenacity.wait_fixed(5),
     before_sleep=tenacity.before_sleep_log(logging, logging.DEBUG),
 )
-def get_data_from_dct(component):
-    response = requests.get(DCT_API_URL + component,
-                            headers=req_headers, verify=False)
+def get_data_from_dct(component, query=QUERY):
+    url = DCT_API_URL + component + query
+    response = requests.get(url, headers=req_headers, verify=False)
     assert response.status_code == 200
     response_json = response.json()
+    records = response_json['response_metadata']['total']
+    logging.debug(f"Get {component} returned {records} records")
+
+    # handle pagination
+    if 'next_cursor' in response_json['response_metadata']:
+        logging.debug('Response is paginated getting the next page')
+        next_cursor = response_json['response_metadata']['next_cursor']
+        next_page = get_data_from_dct(
+            component, query=QUERY+'&cursor={}'.format(next_cursor)
+        )
+        response_json['items'].extend(next_page['items'])
+
     return response_json
 
 
