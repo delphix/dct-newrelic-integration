@@ -16,7 +16,17 @@ It's assumed that you have a New Relic valid account and one or many [Delphix En
 DCT Multicloud will extract data from the Delphix Engines and we will use [New Relic Telemetry SDK](https://docs.newrelic.com/docs/telemetry-data-platform/ingest-apis/telemetry-sdks-report-custom-telemetry-data/) to send that data to New Relic.
 For this project, we will use the [Python SDK](https://github.com/newrelic/newrelic-telemetry-sdk-python), however you can use any of the available SDKs in different languages.
 
-We are using Python 3.8 for this project. Hence, prerequisite is to have Python 3.8 installed on your system.
+We are using Python 3.7+ for this project. Hence, prerequisite is to have Python 3.7+ installed on your system.
+
+<hr>
+<h4> Supported Python Versions </h4>
+<hr>
+
+- MacOS - Python3.7 and Python3.8
+- Linux - Python3.7+
+- Windows - Python3.7+
+
+<hr>
 
 ### Installing
 To use this script we have to do some steps first:
@@ -32,8 +42,20 @@ To push the data from Delphix DCT Multicloud to New Relic, we will have to perfo
   * DCT_API_KEY
   * NEW_RELIC_INSERT_KEY
 * Clone this repository
+* Go inside the project directory - `cd dct-newrelic-integration`
+
+For Mac and Linux:
 * Run command `make env` (This will create the virtual environment)
 * Run command `make run` (This will run the script and push the data)
+
+For Windows:
+* Check that python 3 is installed
+* Create a virtual environment running `python -m venv venv`
+* Activate the virtual environment by running `venv\Scripts\activate`
+* Install the dependencies by running `pip install -r requirements.txt`
+* Set Python path by - `set PYTHONPATH=.`
+* Run the script using `python src\main.py`
+
 
 On execution, this script will extract data from all the registered Delphix Engines for the following metrics:
 

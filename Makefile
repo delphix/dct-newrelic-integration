@@ -8,14 +8,16 @@ VENV := venv
 PYTHON := $(VENV)/bin/python
 PIP := $(VENV)/bin/pip
 DLPX_NR := $(ROOT_DIR)/dist/delphix-nr
+DEFAULT_PYTHON3_ALIAS := python3
 
 define show_version
 	@export LC_ALL=en_AU.UTF-8; $(DLPX_NR) --version
 endef
 
 define check_python_exists
-	@if ! command -v python3.8 -V >/dev/null 2>&1; then \
-		echo "Python 3.8 is NOT present on the system, Please install it"; \
+	@if ! command -v $(DEFAULT_PYTHON3_ALIAS) -V >/dev/null 2>&1; then \
+		echo "Python 3 is NOT present on the system, Please install it"; \
+		echo "If it is installed, then change the "DEFAULT_PYTHON3_ALIAS" in Makefile";\
 		exit 1; \
 	fi
 endef
@@ -41,7 +43,7 @@ tests:
 --create_virtual_env: --check_python
 	@# Help: Creates a virtual environment
 	-@echo 'Creating Virtual environment'
-	@python3.8 -m venv venv || echo 'Python env already exists'
+	@$(DEFAULT_PYTHON3_ALIAS) -m venv venv || echo 'Python env already exists'
 
 --install_dependencies: requirements.txt
 	@# Help: Installs the dependencies from requirements.txt
@@ -50,11 +52,10 @@ tests:
 	@$(PIP) install -r requirements.txt
 
 env: --create_virtual_env --install_dependencies
-	@# Help: Creates a virtual environment with python3.8 if not already present and activates it
+	@# Help: Creates a virtual environment with python 3 if not already present
 
 clean_env:
 	@# Help: Clean the virtual env that was created
-	-@$(VENV)/bin/pre-commit uninstall
 	-@rm -rf venv
 
 clean_build:
