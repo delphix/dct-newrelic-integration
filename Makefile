@@ -1,6 +1,7 @@
 #
 # Copyright (c) 2022 by Delphix. All rights reserved.
 #
+
 .PHONY: --check_python --check_env_exists run tests --create_virtual_env --install_dependencies env clean_build clean_env clean build
 
 ROOT_DIR := $(shell pwd)

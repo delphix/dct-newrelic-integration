@@ -11,11 +11,10 @@ import datetime
 import os.path
 import sys
 import time
-
+import urllib3
 import newrelic_telemetry_sdk.client
 import requests
 import logging
-import urllib3
 import configparser
 import tenacity
 
@@ -29,10 +28,10 @@ config_file = "dct_nr_config.ini"
 config = configparser.ConfigParser()
 
 if not os.path.exists(config_file):
-    raise Exception("Config file is required. "
-                    "Please add dct_nr_config.ini in the current directory")
+    raise Exception("Config file is required."
+                    " Please add dct_nr_config.ini in the current directory")
 
-config.read_file(open("dct_nr_config.ini"))
+config.read_file(open(config_file))
 config_log_level = config['LOGGING']['LEVEL']
 INTERVAL = int(config['INTERVAL']['seconds'])
 
@@ -94,7 +93,7 @@ def send_event(event):
     before_sleep=tenacity.before_sleep_log(logging, logging.DEBUG),
 )
 def get_data_from_dct(component, query=QUERY):
-    url = DCT_API_URL + component + query
+    url = f"{DCT_API_URL}{component}{query}"
     response = requests.get(url, headers=req_headers, verify=False)
     assert response.status_code == 200
     response_json = response.json()

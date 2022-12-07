@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021,2022 by Delphix. All rights reserved.
+# Copyright (c) 2022 by Delphix. All rights reserved.
 #
 
 from setuptools import find_packages
