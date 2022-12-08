@@ -11,6 +11,8 @@ import datetime
 import os.path
 import sys
 import time
+import traceback
+
 import urllib3
 import newrelic_telemetry_sdk.client
 import requests
@@ -95,6 +97,7 @@ def send_event(event):
 def get_data_from_dct(component, query=QUERY):
     url = f"{DCT_API_URL}{component}{query}"
     response = requests.get(url, headers=req_headers, verify=False)
+    logging.debug("DCT API - % responded with %", url, response.status_code)
     assert response.status_code == 200
     response_json = response.json()
     records = response_json['response_metadata']['total']
@@ -119,15 +122,20 @@ def push_data():
                      datetime.datetime.now())
         logging.info('*' * 70)
         for i in DLPX_TYPES:
-            response_json = get_data_from_dct(i)
+            try:
+                logging.debug("Getting Data from DCT for %s ", i)
+                response_json = get_data_from_dct(i)
 
-            new_relic_type = "Delphix " + str(i).split('/')[-1]
-            logging.info("Sending Data for %s \n", new_relic_type)
-            for line in response_json['items']:
-                event = Event(
-                    new_relic_type, line
-                )
-                send_event(event)
+                new_relic_type = "Delphix " + str(i).split('/')[-1]
+                logging.info("Sending Data for %s \n", new_relic_type)
+                for line in response_json['items']:
+                    event = Event(new_relic_type, line)
+                    send_event(event)
+            except Exception as e:
+                logging.error("Exception occurred while collecting or"
+                              " sending data for component - %s", i)
+                logging.error(e)
+                logging.error(traceback.format_exc())
 
         logging.info(f"Sleeping for %s seconds before pushing again", INTERVAL)
         logging.info('-' * 70)
