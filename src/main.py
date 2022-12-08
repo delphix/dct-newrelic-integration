@@ -97,7 +97,7 @@ def send_event(event):
 def get_data_from_dct(component, query=QUERY):
     url = f"{DCT_API_URL}{component}{query}"
     response = requests.get(url, headers=req_headers, verify=False)
-    logging.debug("DCT API - % responded with %", url, response.status_code)
+    logging.debug("DCT API - %s responded with %s", url, response.status_code)
     assert response.status_code == 200
     response_json = response.json()
     records = response_json['response_metadata']['total']
