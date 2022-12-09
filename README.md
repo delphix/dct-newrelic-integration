@@ -15,10 +15,8 @@ These instructions will provide the information you need to extract data from DC
 
 * New Relic Account: [Sign Up](https://newrelic.com/signup)
 * Delphix Data Control Tower (DCT) with one or more engines: [Data Control Tower Docs](https://delphix.document360.io/dct/docs)
-* Python 3.8+: [Python Install](https://www.python.org/downloads)
+* Python 3.7+: [Python Install](https://www.python.org/downloads)
 * This [GitHub repository](https://github.com/delphix/dct-newrelic-integration)
-
-We are using Python 3.7+ for this project. Hence, prerequisite is to have Python 3.7+ installed on your system.
 
 <hr>
 <h4> Supported Python Versions </h4>
@@ -33,7 +31,7 @@ We are using Python 3.7+ for this project. Hence, prerequisite is to have Python
 ### Installing
 To use this script we have to do some steps first:
 
-* Generate the [keys to connect to DCT](https://docs.delphix.com/dctmc/authentication)
+* Generate the [key to connect to DCT](https://docs.delphix.com/dctmc/authentication)
 * Generate the [New Relic access key](https://docs.newrelic.com/docs/apis/intro-apis/new-relic-api-keys/#ingest-license-key)
 * Note the URL of the DCT instance VM
 

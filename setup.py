@@ -7,7 +7,7 @@ from setuptools import setup
 from src.main import VERSION
 
 # Get the long description from the README file
-long_description = "This is an executable for Delphix New Relic Integration"
+long_description = "This is an executable for the Delphix Integration for New Relic"
 
 setup(
     version=VERSION,
@@ -34,7 +34,7 @@ setup(
     author="Delphix Engineering",
     keywords="new-relic, delphix, dct",  # noqa
     license="Apache 2",
-    description="Delphix New Relic Integration",
+    description="Delphix Integration for New Relic",
     dependency_links=[],
     name="delphix-nr",
     long_description_content_type="text/markdown",
