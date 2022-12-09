@@ -1,8 +1,14 @@
+#
+# Copyright (c) 2021, 2022 by Delphix. All rights reserved.
+#
+
 ## Contributing
  1. Fork the project.
- 1. Make your bug fix or new feature.
- 1. Add tests for your code.
- 1. Send a pull request.
+ 2. Refer to [README.md](README.md) for the setup, pre-configurations and running the project.
+ 3. One you have run the script successfully using `make run` (Linux/MacOS) or `python src\main.py` (Windows)
+ 7. Make your bug fix or new feature.
+ 8. Add tests for your code.
+ 9. Send a pull request.
 
 Contributions must be signed as `User Name <user@email.com>`. Make sure to [set up Git with user name and email address](https://git-scm.com/book/en/v2/Getting-Started-First-Time-Git-Setup). Bug fixes should branch from the current stable branch. New features should be based on the release branch.
 

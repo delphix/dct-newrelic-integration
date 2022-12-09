@@ -7,6 +7,7 @@ This project will allow you to send data from [Delphix Data Control Tower (DCT)]
 
 ## Getting Started
 
+
 These instructions will provide the information you need to extract data from DCT and send it to New Relic. The Python script can run from any location with access to both DCT and New Relic.
 
 
@@ -14,43 +15,56 @@ These instructions will provide the information you need to extract data from DC
 
 * New Relic Account: [Sign Up](https://newrelic.com/signup)
 * Delphix Data Control Tower (DCT) with one or more engines: [Data Control Tower Docs](https://delphix.document360.io/dct/docs)
-* Python 3.8+: [Python Install](https://www.python.org/downloads)
+* Python 3.7+: [Python Install](https://www.python.org/downloads)
 * This [GitHub repository](https://github.com/delphix/dct-newrelic-integration)
 
-Note: If you are using Windows, `py` may be specified instead of `python`.
+<hr>
+<h4> Supported Python Versions </h4>
+<hr>
+
+- MacOS - Python3.7 and Python3.8
+- Linux - Python3.7+
+- Windows - Python3.7+
+
+<hr>
+
+### Installing
+To use this script we have to do some steps first:
+
+* Generate the [key to connect to DCT](https://docs.delphix.com/dctmc/authentication)
+* Generate the [New Relic access key](https://docs.newrelic.com/docs/apis/intro-apis/new-relic-api-keys/#ingest-license-key)
+* Note the URL of the DCT instance VM
 
 
 ### Setup
 The ```src/main.py``` script contains the logic to perform the data upload. However, you must do some configuration first. 
 
-#### Package Installation
-Run the following 2 pip installation commands to install the required Python packages:
-```python -m pip install requests```
-```python -m pip install newrelic_telemetry_sdk```
+* We need to supply the above gathered information using 3 environment variables
+  * DCT_HOST_URL
+  * DCT_API_KEY
+  * NEW_RELIC_INSERT_KEY
+* Clone this repository
+* Go inside the project directory - `cd dct-newrelic-integration`
 
-#### Required Variable Configuration
-Retrieve the following:
-* Record the DCT URL.
-* Generate a [DCT API Key](https://delphix.document360.io/docs/authentication
-* Generate a [New Relic INGEST - LICENSE Key](https://docs.newrelic.com/docs/apis/intro-apis/new-relic-api-keys/#ingest-license-key).
+For Mac and Linux:
+* Run command `make env` (This will create the virtual environment)
+* Run command `make run` (This will run the script and push the data)
 
-Once we have these values, specify the following environment variables:
-* DCT_URL
-* DCT_KEY
-* NEW_RELIC_KEY
+For Windows:
+* Check that python 3 is installed
+* Create a virtual environment running `python -m venv venv`
+* Activate the virtual environment by running `venv\Scripts\activate`
+* Install the dependencies by running `pip install -r requirements.txt`
+* Set Python path by - `set PYTHONPATH=.`
+* Run the script using `python src\main.py`
 
 Note: You may modify the Python script directly, but it is best practice to specify sensitive data through environment variables.
 
-#### Optional Variable Configuration
-Some variables, such as Components, Interval, and Logging variables, are set by default in the `dct_nr_config.ini` file. These can be  updated to modify which APIs to call, how long to wait between syncs, or logging level.
-
-### Execution
-
-You may test the script by running the following command:
-```python src/main.py```
+<hr>
 
 In production, it is common to use a scheduler, such as a systemd, nohup, or wininit.exe, to ensure the script continually runs. For example, the following nohup command will run the script every N seconds based on the Interval provided in the `dct_nr_config.ini` file:
 ```nohup python src/main.py &```
+
 
 On each execution, this script will extract the following metrics from all registered Delphix engines:
 
@@ -59,6 +73,14 @@ On each execution, this script will extract the following metrics from all regis
 * Sources - Data extraction date, Database Type, Database Version, Environment ID, JDBC Connection String, Database Name and Size, etc
 * dSources - Data extraction date, dSource Creation Date, dSource Type, Version, Name, Status, Size, etc.
 * VDBs - Data extraction date, Database Type and Version, Creation Date, Group Name, Name, Parent ID, Size, Status, etc.
+
+
+More over we have `dct_nr_config.ini` file which can be used to configure 
+- Logging Level 
+- Interval (in seconds): This script keeps running and sleeps for `INTERVAL` seconds after sending the data once.
+- Components we need from DCT APIs
+
+Once the data is available in New Relic, it can be used to be queried or to create dashboards.
 
 
 ## Data, Dashboards, and Alerts
@@ -113,4 +135,5 @@ License
  See the License for the specific language governing permissions and
  limitations under the License.
  ```
-Copyright (c) 2021, 2022 by Delphix. All rights reserved.
+
+Copyright (c) 2014, 2022 by Delphix. All rights reserved.
