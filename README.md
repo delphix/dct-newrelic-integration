@@ -135,5 +135,3 @@ License
  See the License for the specific language governing permissions and
  limitations under the License.
  ```
-
-Copyright (c) 2014, 2022 by Delphix. All rights reserved.
