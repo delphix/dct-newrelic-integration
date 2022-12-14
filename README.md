@@ -104,7 +104,7 @@ SELECT MAX(data_storage_capacity)-MIN(data_storage_used) FROM `Delphix engines` 
 
 ## Contributing
 
-Please read [CONTRIBUTING.md](https://github.com/delphix/.github/blob/master/CONTRIBUTING.md) for details on our code of conduct, and the process for submitting pull requests to us.
+This project is currently not accepting external contributions.
 
 
 ## Versioning
