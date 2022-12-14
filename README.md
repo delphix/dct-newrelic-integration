@@ -1,91 +1,72 @@
-# Delphix Data Control Tower MultiCloud integration with New Relic
+# Delphix Data Control Tower's Integration with New Relic
 
-This project will allow you to send data from [Delphix Data Control Tower Multicloud](https://docs.delphix.com/dctmc) to [New Relic](https://newrelic.com/) as events. DCT Multicloud is a tool that will allow you to connect to all your Delphix engines on premises or in the cloud (AWS, Azure, Google Cloud, OCI and IBM)
+This project will allow you to send data from [Delphix Data Control Tower (DCT)](https://delphix.document360.io/dct/docs) to [New Relic](https://newrelic.com/) through the Events API. This repository is one component of the Delphix Quickstart. You can learn more on the [Delphix Instant Observability page](https://newrelic.com/instant-observability/delphix).
 
 ![Screenshot](images/image2.png)
 
 
 ## Getting Started
 
-These instructions will provide the code you need to extract data from DCT Multicloud and send it to New Relic.
+
+These instructions will provide the information you need to extract data from DCT and send it to New Relic. The Python script can run from any location with access to both DCT and New Relic.
 
 
 ### Prerequisites
 
-It's assumed that you have a New Relic valid account and one or many [Delphix Engines registered in DCT Multicloud](https://docs.delphix.com/dctmc/connecting-a-delphix-engine).
-DCT Multicloud will extract data from the Delphix Engines and we will use [New Relic Telemetry SDK](https://docs.newrelic.com/docs/telemetry-data-platform/ingest-apis/telemetry-sdks-report-custom-telemetry-data/) to send that data to New Relic.
-For this project, we will use the [Python SDK](https://github.com/newrelic/newrelic-telemetry-sdk-python), however you can use any of the available SDKs in different languages.
+* New Relic Account: [Sign Up](https://newrelic.com/signup)
+* Delphix Data Control Tower (DCT) with one or more engines: [Data Control Tower Docs](https://delphix.document360.io/dct/docs)
+* Python 3.7+: [Python Install](https://www.python.org/downloads)
+* This [GitHub repository](https://github.com/delphix/dct-newrelic-integration)
 
+<hr>
+<h4> Supported Python Versions and OS </h4>
+<hr>
+
+- MacOS - Python3.7 and Python3.8
+- Linux - Python3.7+
+- Windows - Python3.7+
+
+<hr>
 
 ### Installing
-
-To push the data from Delphix DCT Multicloud to New Relic, we use the script ```dlpx_dct_to_nr.py```.
 To use this script we have to do some steps first:
 
-* Generate the [keys to connect to DCT Multicloud](https://docs.delphix.com/dctmc/authentication)
+* Generate the [key to connect to DCT](https://docs.delphix.com/dctmc/authentication)
 * Generate the [New Relic access key](https://docs.newrelic.com/docs/apis/intro-apis/new-relic-api-keys/#ingest-license-key)
+* Note the URL of the DCT instance VM
 
-Once we have these keys we need to replace them in the script:
 
-* In req_headers we replace the DCT Multicloud key
-* In NEW_RELIC_INSERT_KEY we replace the New Relic access key
+### Setup
+The ```src/main.py``` script contains the logic to perform the data upload. However, you must do some configuration first. 
 
-This is the script:
+* We need to supply the above gathered information using 3 environment variables
+  * DCT_HOST_URL
+  * DCT_API_KEY
+  * NEW_RELIC_INSERT_KEY
+* Clone this repository
+* Go inside the project directory - `cd dct-newrelic-integration`
 
-```
-import os
-import requests
-import json
-import sys
-import time
-from newrelic_telemetry_sdk import Event, EventClient
-from requests.packages.urllib3.exceptions import InsecureRequestWarning
+For Mac and Linux:
+* Run command `make env` (This will create the virtual environment)
+* Run command `make run` (This will run the script and push the data)
 
-requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
+For Windows:
+* Check that python 3 is installed
+* Create a virtual environment running `python -m venv venv`
+* Activate the virtual environment by running `venv\Scripts\activate`
+* Install the dependencies by running `pip install -r requirements.txt`
+* Set Python path by - `set PYTHONPATH=.`
+* Run the script using `python src\main.py`
 
-DLPX_TYPES= ["engines","sources","dsources","vdbs","environments"]
-#
-# Request Headers ...
-#
-req_headers = {
-	'Authorization': 'apk 2.bnQDDx46Z4CDlIShLw2ZHElWLyKtsmZaBjbQPjui8LcQ3nELbkdEbQJSki6vmwLf'
-}
+Note: You may modify the Python script directly, but it is best practice to specify sensitive data through environment variables.
 
-#
-# Python session, also handles the cookies ...
-#
-session = requests.session()
+<hr>
 
-#
-# Login ...
-#
-os.environ['NEW_RELIC_INSERT_KEY'] = "87a453b2efe4nd4df78b167e7ac457e076c7NRAL"
-print ('')
-for i in DLPX_TYPES:
+In production, it is common to use a scheduler, such as a systemd, nohup, or wininit.exe, to ensure the script continually runs. For example, the following nohup command will run the script every N seconds based on the Interval provided in the `dct_nr_config.ini` file:
+```nohup make run &```
 
-	response = requests.get('https://localhost:443/v1/'+i, headers=req_headers, verify=False)
-	responsej = json.loads(response.text)
-	print("")
-	print("")
-	print("**********************************************************************************************************************************")
-	event_client = EventClient(os.environ["NEW_RELIC_INSERT_KEY"])
-	NEWRELIC_TYPE="Delphix " + str(i)
-	print (NEWRELIC_TYPE)
-	for line in responsej['items']:
-		event = Event(
-			NEWRELIC_TYPE, line
-		)
-		print (event)
-		response = event_client.send(event)
-		response.raise_for_status()
-		print("Event sent successfully!")
-		print("")
 
-print ('')
-sys.exit(0)
-```
-
-On execution, this script will extract data from all the registered Delphix Engines for the following metrics:
+On each execution, this script will extract the following metrics from all registered Delphix engines:
 
 * Engines - Data extraction date, CPU Count, Storage, Memory, Engine Type, Version, etc.
 * Environments - Data extraction date, Status, Engine ID, Name, etc.
@@ -93,12 +74,20 @@ On execution, this script will extract data from all the registered Delphix Engi
 * dSources - Data extraction date, dSource Creation Date, dSource Type, Version, Name, Status, Size, etc.
 * VDBs - Data extraction date, Database Type and Version, Creation Date, Group Name, Name, Parent ID, Size, Status, etc.
 
-This script can be added to cron or any scheduler to run in any time interval. Once the data is available in New Relic, it can be used to be queried or to create dashboards.
+
+More over we have `dct_nr_config.ini` file which can be used to configure 
+- Logging Level 
+- Interval (in seconds): This script keeps running and sleeps for `INTERVAL` seconds after sending the data once.
+- Components we need from DCT APIs
+
+Once the data is available in New Relic, it can be used to be queried or to create dashboards.
 
 
-## Data and Dashboards
+## Data, Dashboards, and Alerts
 
-This is how the raw data looks like in the [Query your data](https://docs.newrelic.com/docs/query-your-data/explore-query-data/get-started/introduction-querying-new-relic-data/#browse-data) window for the VDB metric:
+Once the data is available within New Relic, you are free to leverage it as you wish through customized Dashboards and Alerts. Samples can be found as a part of the [Delphix Quickstart](https://newrelic.com/instant-observability/delphix). 
+
+As an example, this is how the raw data looks like in the [Query your data](https://docs.newrelic.com/docs/query-your-data/explore-query-data/get-started/introduction-querying-new-relic-data/#browse-data) window for the VDB metric:
 
 ![Screenshot](images/image1.png)
 
@@ -115,7 +104,7 @@ SELECT MAX(data_storage_capacity)-MIN(data_storage_used) FROM `Delphix engines` 
 
 ## Contributing
 
-Please read [CONTRIBUTING.md](https://github.com/delphix/.github/blob/master/CONTRIBUTING.md) for details on our code of conduct, and the process for submitting pull requests to us.
+This project is currently not accepting external contributions.
 
 
 ## Versioning
@@ -123,9 +112,9 @@ Please read [CONTRIBUTING.md](https://github.com/delphix/.github/blob/master/CON
 We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/your/project/tags).
 
 
-## Reporting Issues
+## Reporting Issues and Questions
 
-Issues should be reported in the GitHub repo's issue tab. Include a link to it.
+Please report all issues and questions in the [GitHub issue tab](https://github.com/delphix/dct-newrelic-integration/issues) or [Delphix Community page](https://community.delphix.com/home). Please include a complete problem description, error logs if appropriate, and directions on how to reproduce.
 
 
 ## Statement of Support
@@ -146,4 +135,3 @@ License
  See the License for the specific language governing permissions and
  limitations under the License.
  ```
-Copyright (c) 2014, 2016 by Delphix. All rights reserved.
