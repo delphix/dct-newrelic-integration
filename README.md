@@ -19,7 +19,7 @@ These instructions will provide the information you need to extract data from DC
 * This [GitHub repository](https://github.com/delphix/dct-newrelic-integration)
 
 <hr>
-<h4> Supported Python Versions </h4>
+<h4> Supported Python Versions and OS </h4>
 <hr>
 
 - MacOS - Python3.7 and Python3.8
@@ -63,7 +63,7 @@ Note: You may modify the Python script directly, but it is best practice to spec
 <hr>
 
 In production, it is common to use a scheduler, such as a systemd, nohup, or wininit.exe, to ensure the script continually runs. For example, the following nohup command will run the script every N seconds based on the Interval provided in the `dct_nr_config.ini` file:
-```nohup python src/main.py &```
+```nohup make run &```
 
 
 On each execution, this script will extract the following metrics from all registered Delphix engines:
