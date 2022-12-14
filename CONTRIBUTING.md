@@ -2,7 +2,7 @@
 # Copyright (c) 2021, 2022 by Delphix. All rights reserved.
 #
 
-Not accepting any external contributions as of now.
+This project is currently not accepting external contributions.
 
 <div style="display:none">
 --- Hidden Block ----
