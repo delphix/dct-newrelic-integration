@@ -23,7 +23,7 @@ setup(
     ],
     install_requires=[
         "newrelic-telemetry-sdk==0.4.3",
-        "requests==2.28.1",
+        "requests==2.31.0",
         "tenacity==8.1.0",
     ],
     # Format is mypkg.mymodule:the_function'
