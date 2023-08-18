@@ -1,6 +1,6 @@
 # Delphix Data Control Tower's Integration with New Relic
 
-This project will allow you to send data from [Delphix Data Control Tower (DCT)](https://delphix.document360.io/dct/docs) to [New Relic](https://newrelic.com/) through the Events API. This repository is one component of the Delphix Quickstart. You can learn more on the [Delphix Instant Observability page](https://newrelic.com/instant-observability/delphix).
+This project will allow you to send data from [Delphix Data Control Tower (DCT)](https://dct.delphix.com/docs/latest) to [New Relic](https://newrelic.com/) through the Events API. This repository is one component of the Delphix Quickstart. You can learn more on the [Delphix Instant Observability page](https://newrelic.com/instant-observability/delphix).
 
 ![Screenshot](images/image2.png)
 
@@ -14,7 +14,7 @@ These instructions will provide the information you need to extract data from DC
 ### Prerequisites
 
 * New Relic Account: [Sign Up](https://newrelic.com/signup)
-* Delphix Data Control Tower (DCT) with one or more engines: [Data Control Tower Docs](https://delphix.document360.io/dct/docs)
+* Delphix Data Control Tower (DCT) with one or more engines: [Data Control Tower Docs](https://dct.delphix.com/docs/latest)
 * Python 3.7+: [Python Install](https://www.python.org/downloads)
 * This [GitHub repository](https://github.com/delphix/dct-newrelic-integration)
 
@@ -31,7 +31,7 @@ These instructions will provide the information you need to extract data from DC
 ### Installing
 To use this script we have to do some steps first:
 
-* Generate the [key to connect to DCT](https://docs.delphix.com/dctmc/authentication)
+* Generate the [key to connect to DCT](https://dct.delphix.com/docs/latest/api-keys)
 * Generate the [New Relic access key](https://docs.newrelic.com/docs/apis/intro-apis/new-relic-api-keys/#ingest-license-key)
 * Note the URL of the DCT instance VM
 
